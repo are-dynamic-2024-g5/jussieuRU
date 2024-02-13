@@ -1,2 +1,1 @@
-# areDynamic
 # jussieuRU
