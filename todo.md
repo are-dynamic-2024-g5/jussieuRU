@@ -5,4 +5,6 @@
  - [X] Class resto
  - [X] Boucle main
  - [ ] métriques
- - [ ] ajouter paramètres
+ - [ ] ajouter paramètres (regime alimentaire, distance)
+ - [ ] ajouter paramtres sorties
+ - [ ] modelisation (brouillon / idee)
