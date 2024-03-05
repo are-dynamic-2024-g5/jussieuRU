@@ -88,7 +88,7 @@ for i in range(timeSpan):
             clients[j].restaurant = bestRest
             bestRest.add_client(j)
 
-    for restaurant in restaurants:m
+    for restaurant in restaurants:
         for j in range(restaurant.eff):
             if not restaurant.line:
                 break
