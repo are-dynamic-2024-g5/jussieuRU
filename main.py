@@ -1,6 +1,8 @@
 import math
+import numpy as np
 from random import random
 from termcolor import colored
+import matplotlib.pyplot as plt
 
 class Client:
     def __init__(self, id, restaurant, patience, budget, waiting=True):
@@ -58,14 +60,20 @@ class Restaurant:
 
 A = Restaurant("CROUS", 10, 3, [])
 B = Restaurant("five", 2, 7, [])
-C = Restaurant("crepes", 1, 6, [])
+C = Restaurant("crepes", 1, 3, [])
 restaurants = [A, B, C]
 clients = []
 clientsPerMinute = 30
 clientsTot = 500
 timeSpan = 45
 
+# Métriques :
+M_queues = np.zeros((len(restaurants),timeSpan))
+
 for i in range(timeSpan):
+    for rest_id in range(len(restaurants)):
+        M_queues[rest_id, i] = len( restaurants[rest_id].line )
+
     print("t =",i)
     for j in range(clientsPerMinute):
         if not clients or clients[-1].id <= clientsTot:
@@ -103,3 +111,12 @@ print(colored("crous : ", "red"),   A.tot, colored( str(round(A.tot/clientsTot*1
       colored("five :  ", "green"), B.tot, colored( str(round(B.tot/clientsTot*100, 1))+"%\n", attrs=["dark"]) +
       colored("crepes :", "blue"),  C.tot, colored( str(round(C.tot/clientsTot*100, 1))+"%\n", attrs=["dark"])  )
 
+colormap = ["#eb3f3f", "#eb703f", "#eba63f"]
+fig, axs = plt.subplots(1, 2, sharey=True)
+axs[0].stackplot(np.arange(0, len(M_queues[0]), 1), M_queues, colors=colormap)
+axs[1].plot(np.arange(0, len(M_queues[0]), 1), M_queues[0], color=colormap[0])
+axs[1].plot(np.arange(0, len(M_queues[0]), 1), M_queues[1], color=colormap[1])
+axs[1].plot(np.arange(0, len(M_queues[0]), 1), M_queues[2], color=colormap[2])
+
+fig.tight_layout()
+plt.show()
