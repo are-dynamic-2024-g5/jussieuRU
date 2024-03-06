@@ -25,23 +25,32 @@ class Client:
         p = self.patience
         return e/r/p
 
+    def appeal_bydistance(self, restaurant):
+        if self.restaurant:
+            return self.restaurant.walking_time[restaurant.id] /2
+        else:
+            return restaurant.walking_time[-1]
+
     def appeal(self, restaurant):
         bp = self.appeal_byprice(restaurant)
         bq = self.appeal_byqueue(restaurant)
+        bd = self.appeal_bydistance(restaurant)
         #print(colored(restaurant.avg_price, "green"), colored(bp, "red"), colored(bq, "red"))
-        return bp * bq
+        return bp * bq / (bd+0.0001)
 
     def bestRestaurant(self, restaurants):
         appeals = [self.appeal(restaurant) for restaurant in restaurants]
         return restaurants[ max(range(len(appeals)), key=appeals.__getitem__) ]
 
 class Restaurant:
-    def __init__(self, name, eff, avg_price, line):
-        self.name = name
+    def __init__(self, id, eff, avg_price, walking_time, line):
+        self.id = id
         self.eff = eff
         self.avg_price = avg_price
+        self.walking_time = list(walking_time)
         self.line = line
-        self.tot = 0
+        self.served = 0
+        print(self.walking_time)
 
     def add_client(self, id):
         self.line.append(id)
@@ -58,26 +67,51 @@ class Restaurant:
                 return i
         return len(self.line)
 
-A = Restaurant("CROUS", 10, 3, [])
-B = Restaurant("five", 2, 7, [])
-C = Restaurant("crepes", 1, 3, [])
+def compute_dists(pos_list, pos):
+    return np.round( np.sqrt( np.sum( (restaurants_pos-pos)**2, axis=1)), 3)
+
+restaurants_names = ["CROUS", "five", "crepes"]
+restaurants_pos = [[0, 4], [1/2, 0], [-1/2, 0]]
+restaurants_pos.append([0, 2.5])
+restaurants_pos = np.array(restaurants_pos) - restaurants_pos[-1]
+
+A = Restaurant(0, 10, 3, compute_dists(restaurants_pos, restaurants_pos[0]), [])
+B = Restaurant(1, 2, 7, compute_dists(restaurants_pos, restaurants_pos[1]), [])
+C = Restaurant(2, 1, 5, compute_dists(restaurants_pos, restaurants_pos[2]), [])
 restaurants = [A, B, C]
 clients = []
-clientsPerMinute = 30
-clientsTot = 500
-timeSpan = 45
+clientsTot = 0
+clientsServed = 0
 
-# Métriques :
+# PARAMÈTRES
+max_int_CPM = (40, 500)
+coefs_CPM = ( max_int_CPM[0]**3 * np.exp(6) / (16* max_int_CPM[1]**2),
+             2* max_int_CPM[1] / (max_int_CPM[0] * np.exp(2)) )
+clientsPerMinute = lambda x: coefs_CPM[0]*x**2*np.exp(-x/coefs_CPM[1])
+timeSpan = 60
+# PARAMÈTRES
+
+# MÉTRIQUES
 M_queues = np.zeros((len(restaurants),timeSpan))
+M_flux = np.zeros((timeSpan))
+M_served = np.zeros((timeSpan))
+# MÉTRIQUES
 
 for i in range(timeSpan):
     for rest_id in range(len(restaurants)):
         M_queues[rest_id, i] = len( restaurants[rest_id].line )
+    M_flux[i] = clientsPerMinute(i)
+    clientsTot += M_flux[i]
+    M_served[i] = sum(restaurant.served for restaurant in restaurants)
 
-    print("t =",i)
-    for j in range(clientsPerMinute):
-        if not clients or clients[-1].id <= clientsTot:
-            clients.append( Client(i*clientsPerMinute+j, None, random(), 10*random()) )
+    #print("t =",i)
+    for j in range(round(clientsPerMinute(i))):
+        if not clients:
+            clients.append(Client(0, None, random(), 10 * random()))
+        elif clients[-1].id <= clientsTot:
+            clients.append( Client(clients[-1].id+1, None, random(), 10*random()) )
+    if not clients:
+        continue
 
     for j in range(clients[-1].id):
         if not clients[j].waiting:
@@ -85,14 +119,14 @@ for i in range(timeSpan):
         bestRest = clients[j].bestRestaurant(restaurants)
         currentRest = clients[j].restaurant
         if currentRest != bestRest:
-            print(colored(restaurants[0].line, "red"))
-            print(colored(restaurants[1].line, "green"))
-            print(colored(restaurants[2].line, "blue"))
+            #print(colored(restaurants[0].line, "red"))
+            #print(colored(restaurants[1].line, "green"))
+            #print(colored(restaurants[2].line, "blue"))
 
             if currentRest:
-                print(f"swap ({j} -> {bestRest.name})")
+                print(f"swap ({j} -> {restaurants_names[bestRest.id]})")
                 currentRest.remove_client(j)
-            print("")
+            #print("")
             clients[j].restaurant = bestRest
             bestRest.add_client(j)
 
@@ -102,21 +136,28 @@ for i in range(timeSpan):
                 break
             clients[restaurant.line[0]].waiting = False
             restaurant.remove_client( restaurant.line[0] )
-            restaurant.tot += 1
+            restaurant.served += 1
 #for client in clients:
 #    ranks = [len(restaurant.line)-restaurant.rank(client.id) for restaurant in restaurants]
 #    print(ranks)
 print('')
-print(colored("crous : ", "red"),   A.tot, colored( str(round(A.tot/clientsTot*100, 1))+"%\n", attrs=["dark"]) +
-      colored("five :  ", "green"), B.tot, colored( str(round(B.tot/clientsTot*100, 1))+"%\n", attrs=["dark"]) +
-      colored("crepes :", "blue"),  C.tot, colored( str(round(C.tot/clientsTot*100, 1))+"%\n", attrs=["dark"])  )
+print(colored("crous : ", "red"),   A.served, colored( str(round(A.served/clientsTot*100, 1))+"%\n", attrs=["dark"]) +
+      colored("five :  ", "green"), B.served, colored( str(round(B.served/clientsTot*100, 1))+"%\n", attrs=["dark"]) +
+      colored("crepes :", "blue"),  C.served, colored( str(round(C.served/clientsTot*100, 1))+"%\n", attrs=["dark"])  )
 
-colormap = ["#eb3f3f", "#eb703f", "#eba63f"]
+X_arr = np.arange(0, timeSpan, 1)
+colormap = ["#003049", "#d62828", "#f77f00", "#fcbf49", "#eae2b7"]
 fig, axs = plt.subplots(1, 2, sharey=True)
-axs[0].stackplot(np.arange(0, len(M_queues[0]), 1), M_queues, colors=colormap)
-axs[1].plot(np.arange(0, len(M_queues[0]), 1), M_queues[0], color=colormap[0])
-axs[1].plot(np.arange(0, len(M_queues[0]), 1), M_queues[1], color=colormap[1])
-axs[1].plot(np.arange(0, len(M_queues[0]), 1), M_queues[2], color=colormap[2])
-
+axs[0].stackplot(X_arr, [M_served, M_queues[0], M_queues[1], M_queues[2], clientsTot-(M_queues[0]+M_queues[1]+M_queues[2]+M_served)], colors=colormap)
+#axs[0].plot(X_arr, clientsTot-M_flux_P, color="white")
+axs[1].plot(X_arr, M_served, color=colormap[0])
+axs[1].plot(X_arr, M_queues[0], color=colormap[1])
+axs[1].plot(X_arr, M_queues[1], color=colormap[2])
+axs[1].plot(X_arr, M_queues[2], color=colormap[3])
+axs[1].plot(X_arr, clientsTot-(M_queues[0]+M_queues[1]+M_queues[2]+M_served), color=colormap[4])
+axs[0].legend(['mange/à mangé', 'CROUS', 'FIVE', 'CRÈPES', 'en cours'], loc="lower right")
+axs[0].set_aspect(timeSpan/clientsTot/1)
+axs[1].set_aspect(timeSpan/clientsTot/1)
 fig.tight_layout()
+fig.set_dpi(240)
 plt.show()
