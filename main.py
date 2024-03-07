@@ -50,7 +50,6 @@ class Restaurant:
         self.walking_time = list(walking_time)
         self.line = line
         self.served = 0
-        print(self.walking_time)
 
     def add_client(self, id):
         self.line.append(id)
@@ -156,8 +155,7 @@ axs[1].plot(X_arr, M_queues[1], color=colormap[2])
 axs[1].plot(X_arr, M_queues[2], color=colormap[3])
 axs[1].plot(X_arr, clientsTot-(M_queues[0]+M_queues[1]+M_queues[2]+M_served), color=colormap[4])
 axs[0].legend(['mange/à mangé', 'CROUS', 'FIVE', 'CRÈPES', 'en cours'], loc="lower right")
-axs[0].set_aspect(timeSpan/clientsTot/1)
-axs[1].set_aspect(timeSpan/clientsTot/1)
+axs[0].set_aspect(timeSpan/clientsTot/1.5)
+axs[1].set_aspect(timeSpan/clientsTot/1.5)
 fig.tight_layout()
-fig.set_dpi(240)
 plt.show()
