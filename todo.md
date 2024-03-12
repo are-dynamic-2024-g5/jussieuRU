@@ -7,7 +7,8 @@
  - [X] pourquoi les resultats ne fluctuent pas ?
  - [ ] ⚠️⚠️ améliorer la fonction appeal (l.39) ⚠️⚠️
  - [ ] métriques
- - [ ] pourquoi les gens ne changent-ils plus de resto ?
- - [ ] ajouter paramètres (regime alimentaire, distance)
+ - [X] pourquoi les gens ne changent-ils plus de resto ?
+ - [ ] paramètre : regime alimentaire
+ - [X] paramètre : distance
  - [ ] ajouter paramtres sorties
  - [ ] modelisation (brouillon / idee)
