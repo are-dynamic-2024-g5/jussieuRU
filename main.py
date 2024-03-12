@@ -23,7 +23,7 @@ class Client:
         r = restaurant.rank(self.id)+1
         e = restaurant.eff
         p = self.patience
-        return e/r/p
+        return np.exp(-e/r/p)
 
     def appeal_bydistance(self, restaurant):
         if self.restaurant:
@@ -31,12 +31,20 @@ class Client:
         else:
             return restaurant.walking_time[-1]
 
+    def appeal_byprefs(self, restaurant):
+        return self.pref_lists[restaurant.id] * 5
+
     def appeal(self, restaurant):
         bp = self.appeal_byprice(restaurant)
         bq = self.appeal_byqueue(restaurant)
         bd = self.appeal_bydistance(restaurant)
+        bg = self.appeal_byprefs(restaurant)
         #print(colored(restaurant.avg_price, "green"), colored(bp, "red"), colored(bq, "red"))
-        return bp * bq / (bd+0.0001) + self.pref_lists[restaurant.id]
+        Mp.append(bp)
+        Mq.append(bq)
+        Md.append(bd)
+        Mg.append(bg)
+        return bp + bq + bd + bg
 
     def bestRestaurant(self, restaurants):
         appeals = [self.appeal(restaurant) for restaurant in restaurants]
@@ -74,23 +82,26 @@ restaurants_pos = [[0, 4], [1/2, 0], [-1/2, 0]]
 restaurants_pos.append([0, 2.5])
 restaurants_pos = np.array(restaurants_pos) - restaurants_pos[-1]
 
-A = Restaurant(0, 10, 2.15, compute_dists(restaurants_pos, restaurants_pos[0]), [])
+A = Restaurant(0, 15, 2.61, compute_dists(restaurants_pos, restaurants_pos[0]), [])
 B = Restaurant(1, 2, 7, compute_dists(restaurants_pos, restaurants_pos[1]), [])
 C = Restaurant(2, 1, 6, compute_dists(restaurants_pos, restaurants_pos[2]), [])
 restaurants = [A, B, C]
 clients = []
 clientsTot = 0
 clientsServed = 0
-
+Mp = []
+Mq = []
+Md = []
+Mg = []
 # PARAMÈTRES
-max_int_CPM = (40, 500)
+max_int_CPM = (70, 500)
 coefs_CPM = ( max_int_CPM[0]**3 * np.exp(6) / (16* max_int_CPM[1]**2),
              2* max_int_CPM[1] / (max_int_CPM[0] * np.exp(2)) )
 clientsPerMinute = lambda x: coefs_CPM[0]*x**2*np.exp(-x/coefs_CPM[1])
-timeSpan = 90
+timeSpan = 70
 
 random_patience = lambda: np.random.random()
-random_budget   = lambda: np.random.normal(4.5, 2)
+random_budget   = lambda: np.random.normal(3.5, 2)
 random_prefs    = lambda: np.random.normal(0, .05, len(restaurants))
 # PARAMÈTRES
 
@@ -148,6 +159,14 @@ for i in range(timeSpan):
 #for client in clients:
 #    ranks = [len(restaurant.line)-restaurant.rank(client.id) for restaurant in restaurants]
 #    print(ranks)
+#fig, axs = plt.subplots(1, 4)
+#axs[0].boxplot(Mp)
+#axs[1].boxplot(Mq)
+#axs[2].boxplot(Md)
+#axs[3].boxplot(Mg)
+#plt.show()
+#print()
+#exit()
 print('')
 print(colored("crous : ", "red"),   A.served, colored( str(round(A.served/clientsTot*100, 1))+"%\n", attrs=["dark"]) +
       colored("five :  ", "green"), B.served, colored( str(round(B.served/clientsTot*100, 1))+"%\n", attrs=["dark"]) +
