@@ -1,4 +1,3 @@
-import math
 import numpy as np
 from termcolor import colored
 import matplotlib.pyplot as plt
@@ -16,20 +15,21 @@ class Client:
         p = restaurant.avg_price
         b = self.budget
         axs = p-b+.3
-        val = (1-2*axs)*math.exp(2*axs)
+        val = (1-2*axs)*np.exp(2*axs)
         return max(0, (val+1)/2 )
 
     def appeal_byqueue(self, restaurant):
         r = restaurant.rank(self.id)+1
         e = restaurant.eff
         p = self.patience
-        return np.exp(-e/r/p)
+        return np.exp(-r/e/p)
+        #return np.exp(-e/r/p)
 
     def appeal_bydistance(self, restaurant):
         if self.restaurant:
-            return self.restaurant.walking_time[restaurant.id] /2
+            return np.exp( -self.restaurant.walking_time[restaurant.id]/2 )
         else:
-            return restaurant.walking_time[-1]
+            return np.exp( -restaurant.walking_time[-1])
 
     def appeal_byprefs(self, restaurant):
         return self.pref_lists[restaurant.id] * 5
@@ -38,13 +38,17 @@ class Client:
         bp = self.appeal_byprice(restaurant)
         bq = self.appeal_byqueue(restaurant)
         bd = self.appeal_bydistance(restaurant)
-        bg = self.appeal_byprefs(restaurant)
+        bpr= self.appeal_byprefs(restaurant)
         #print(colored(restaurant.avg_price, "green"), colored(bp, "red"), colored(bq, "red"))
+        #app = bp * bq * bd * bpr
+        app = 5*bp + 4*bq + 1*bd + 1*bpr
+
         Mp.append(bp)
         Mq.append(bq)
         Md.append(bd)
-        Mg.append(bg)
-        return bp + bq + bd + bg
+        Mg.append(bpr)
+        Mapp.append(app)
+        return app
 
     def bestRestaurant(self, restaurants):
         appeals = [self.appeal(restaurant) for restaurant in restaurants]
@@ -83,16 +87,13 @@ restaurants_pos.append([0, 2.5])
 restaurants_pos = np.array(restaurants_pos) - restaurants_pos[-1]
 
 A = Restaurant(0, 15, 2.61, compute_dists(restaurants_pos, restaurants_pos[0]), [])
-B = Restaurant(1, 2, 7, compute_dists(restaurants_pos, restaurants_pos[1]), [])
+B = Restaurant(1, 3, 7, compute_dists(restaurants_pos, restaurants_pos[1]), [])
 C = Restaurant(2, 1, 6, compute_dists(restaurants_pos, restaurants_pos[2]), [])
 restaurants = [A, B, C]
 clients = []
 clientsTot = 0
 clientsServed = 0
-Mp = []
-Mq = []
-Md = []
-Mg = []
+
 # PARAMÈTRES
 max_int_CPM = (70, 500)
 coefs_CPM = ( max_int_CPM[0]**3 * np.exp(6) / (16* max_int_CPM[1]**2),
@@ -110,6 +111,11 @@ M_queues = np.zeros((len(restaurants),timeSpan))
 M_flux = np.zeros((timeSpan))
 M_served = np.zeros((timeSpan))
 M_swaps = np.zeros((timeSpan))
+Mp = []
+Mq = []
+Md = []
+Mg = []
+Mapp = []
 # MÉTRIQUES
 
 for i in range(timeSpan):
@@ -142,7 +148,7 @@ for i in range(timeSpan):
             #print(colored(restaurants[0].line, "red")+ "\n"+ colored(restaurants[1].line, "green")+ "\n"+ colored(restaurants[2].line, "blue"))
 
             if currentRest:
-                print(f"swap ({j} -> {restaurants_names[bestRest.id]})")
+                #print(f"swap ({j} -> {restaurants_names[bestRest.id]})")
                 M_swaps[i] += 1
                 currentRest.remove_client(j)
             #print("")
@@ -167,7 +173,7 @@ for i in range(timeSpan):
 #plt.show()
 #print()
 #exit()
-print('')
+print(f'swaps : {np.sum(M_swaps)}')
 print(colored("crous : ", "red"),   A.served, colored( str(round(A.served/clientsTot*100, 1))+"%\n", attrs=["dark"]) +
       colored("five :  ", "green"), B.served, colored( str(round(B.served/clientsTot*100, 1))+"%\n", attrs=["dark"]) +
       colored("crepes :", "blue"),  C.served, colored( str(round(C.served/clientsTot*100, 1))+"%\n", attrs=["dark"])  )
@@ -177,7 +183,7 @@ colormap = ["#003049", "#d62828", "#f77f00", "#fcbf49", "#eae2b7"]
 fig, axs = plt.subplots(1, 2, sharey=True)
 axs[0].stackplot(X_arr, [M_served, M_queues[0], M_queues[1], M_queues[2], clientsTot-(M_queues[0]+M_queues[1]+M_queues[2]+M_served)], colors=colormap)
 #axs[0].plot(X_arr, clientsTot-M_flux_P, color="white")
-#axs[0].plot(X_arr, np.cumsum(M_swaps), color="white")
+axs[1].plot(X_arr, np.cumsum(M_swaps), color="black")
 axs[1].plot(X_arr, M_served, color=colormap[0])
 axs[1].plot(X_arr, M_queues[0], color=colormap[1])
 axs[1].plot(X_arr, M_queues[1], color=colormap[2])
