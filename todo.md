@@ -8,10 +8,9 @@
  - [X] ⚠️⚠️ améliorer la fonction appeal (l.39) ⚠️⚠️
  - [ ] métriques
  - [X] pourquoi les gens ne changent-ils plus de resto ?
- - [ ] paramètre : regime alimentaire
  - [X] paramètre : distance
  - [ ] ajouter paramtres sorties
- - [ ] trouver nb total personnes mangent jussieu
- - [ ] trouver nb personnes CROUS
- - [ ] trouver nb personnes five
- - [ ] trouver nb personnes crêpes
+ - [X] trouver nb total personnes mangent jussieu
+ - [X] trouver nb personnes CROUS
+ - [X] trouver nb personnes five
+ - [X] trouver nb personnes crêpes
