@@ -42,7 +42,7 @@ class Client:
         bpr= self.appeal_byprefs(restaurant)
         #print(colored(restaurant.avg_price, "green"), colored(bp, "red"), colored(bq, "red"))
         #app = bp * bq * bd * bpr
-        app = 5*bp + 4*bq + 1*bd + 1*bpr
+        app = 6*bp + 4*bq + 1*bd + 1*bpr
         return app
 
     def bestRestaurant(self, restaurants):
@@ -77,20 +77,7 @@ class Restaurant:
 def compute_dists(pos_list, pos):
     return np.round( np.sqrt( np.sum( (pos_list-pos)**2, axis=1)), 3)
 
-def run(max_int_CPM=None, timeSpan=None, random_patience=None, random_budget=None, random_prefs=None, showResults=False):
-    restaurants_names = ["CROUS", "five", "crepes"]
-    restaurants_pos = [[0, 4], [1/2, 0], [-1/2, 0]]
-    restaurants_pos.append([0, 2.5])
-    restaurants_pos = np.array(restaurants_pos) - restaurants_pos[-1]
-
-    A = Restaurant(0, 15, 2.61, compute_dists(restaurants_pos, restaurants_pos[0]), []) #56% (stats)
-    B = Restaurant(1, 3, 7, compute_dists(restaurants_pos, restaurants_pos[1]), [])
-    C = Restaurant(2, 1, 6, compute_dists(restaurants_pos, restaurants_pos[2]), [])
-    restaurants = [A, B, C]
-    clients = []
-    clientsTot = 0
-    clientsServed = 0
-
+def run(crousEff=None, crousPrice=None, max_int_CPM=None, timeSpan=None, random_patience=None, random_budget=None, random_prefs=None, showResults=False):
     # PARAMÈTRES
     if not max_int_CPM:
         max_int_CPM = (300, 2000)
@@ -103,10 +90,28 @@ def run(max_int_CPM=None, timeSpan=None, random_patience=None, random_budget=Non
     if not random_patience:
         random_patience = lambda: np.random.random()
     if not random_budget:
-        random_budget = lambda: np.random.normal(3.5, 2)
+        random_budget = lambda: np.random.normal(3, 2)
     if not random_prefs:
         random_prefs = lambda: np.random.normal(0, .05, len(restaurants))
+
+    if not crousEff:
+        crousEff = 15
+    if not crousPrice:
+        crousPrice = 2.61
     # PARAMÈTRES
+
+    restaurants_names = ["CROUS", "five", "crepes"]
+    restaurants_pos = [[0, 4], [1 / 2, 0], [-1 / 2, 0]]
+    restaurants_pos.append([0, 2.5])
+    restaurants_pos = np.array(restaurants_pos) - restaurants_pos[-1]
+
+    A = Restaurant(0, crousEff, crousPrice, compute_dists(restaurants_pos, restaurants_pos[0]), [])  # 56% (stats)
+    B = Restaurant(1, 3, 7, compute_dists(restaurants_pos, restaurants_pos[1]), [])
+    C = Restaurant(2, 1, 6, compute_dists(restaurants_pos, restaurants_pos[2]), [])
+    restaurants = [A, B, C]
+    clients = []
+    clientsTot = 0
+    clientsServed = 0
 
     # MÉTRIQUES
     M_queues = np.zeros((len(restaurants),timeSpan))
