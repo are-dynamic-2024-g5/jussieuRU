@@ -16,7 +16,7 @@ a, b = 1, 1
 f = lambda x:a*x+b
 
 for i in tqdm(range(iter)):
-    M_satisf[i] = np.mean([sim.run(crousEff=f(i)*2, crousPrice=eff2price(f(i)), showResults=False) for _ in range(10)])
+    M_satisf[i] = np.mean([sim.run(crousEff=f(i)*2, crousPrice=eff2price(f(i)), showResults=False) for _ in range(7)])
 
 print(M_satisf)
 X = f(np.arange(0, iter, 1))
