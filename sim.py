@@ -24,7 +24,6 @@ class Client:
         e = restaurant.eff
         p = self.patience
         return np.exp(-r/e/p)
-        #return np.exp(-e/r/p)
 
     def appeal_bydistance(self, restaurant):
         if self.restaurant:
@@ -40,8 +39,6 @@ class Client:
         bq = self.appeal_byqueue(restaurant)
         bd = self.appeal_bydistance(restaurant)
         bpr= self.appeal_byprefs(restaurant)
-        #print(colored(restaurant.avg_price, "green"), colored(bp, "red"), colored(bq, "red"))
-        #app = bp * bq * bd * bpr
         app = 6*bp + 4*bq + 1*bd + 1*bpr
         return app
 
@@ -191,3 +188,6 @@ def run(crousEff=None, crousPrice=None, max_int_CPM=None, timeSpan=None, random_
         plt.show()
 
     return global_satisf
+
+if __name__ == "__main__":
+    run(showResults=True)
