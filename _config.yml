@@ -1,2 +1,6 @@
-name: jussieuRU
-theme: minima
+title: Optimisation des restaurants de Jussieu
+author:
+  name: Felix Lopez - Nicolas Alam - Mehdi Lahboubi - Louis Bresson
+  email: contact@felixlop.com - nicolas.alam90@gmail.com - mehdilahboubi06@gmail.com - louis.brssn@gmail.com
+description: Etude à travers un modèle python de la fréquentation de restaurants autour de Jussieu
+remote_theme: jekyll/minima
