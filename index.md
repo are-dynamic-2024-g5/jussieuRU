@@ -5,7 +5,7 @@ Ce projet consiste à mener une analyse approfondie en utilisant un modèle Pyth
 
 ## Présentation de l'équipe
 
-|(´・ω・｀)| ( ͡° ͜ʖ ͡°) | ಠ_ಠ | ᕕ( ᐛ )ᕗ |
+|(´・ω・｀)| ( ͡° ͜ʖ ͡°) | ಠ_ಠ | (▀̿Ĺ̯▀̿ ̿) |
 |-----|--|--|--|
 | F. Lopez| L. Bresson | N. Alam  | M. Lahboubi  |
 
