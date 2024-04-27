@@ -1,6 +1,7 @@
 import numpy as np
 from termcolor import colored
 import matplotlib.pyplot as plt
+import h5py
 
 class Client:
     def __init__(self, id, restaurant, patience, budget, pref_lists, waiting=True):
@@ -74,7 +75,7 @@ class Restaurant:
 def compute_dists(pos_list, pos):
     return np.round( np.sqrt( np.sum( (pos_list-pos)**2, axis=1)), 3)
 
-def run(crousEff=None, crousPrice=None, max_int_CPM=None, timeSpan=None, random_patience=None, random_budget=None, random_prefs=None, showResults=False):
+def run(crousEff=None, crousPrice=None, max_int_CPM=None, timeSpan=None, random_patience=None, random_budget=None, random_prefs=None, showResults=False, saveProcess=False):
     # PARAMÈTRES
     if not max_int_CPM:
         max_int_CPM = (300, 2000)
@@ -115,6 +116,8 @@ def run(crousEff=None, crousPrice=None, max_int_CPM=None, timeSpan=None, random_
     M_flux = np.zeros((timeSpan))
     M_served = np.zeros((timeSpan))
     M_swaps = np.zeros((len(restaurants), timeSpan))
+    M_steps = np.zeros((timeSpan, int(max_int_CPM[1])+1, 2), dtype=np.uint16)
+    M_clientsAttrs = np.zeros((int(max_int_CPM[1])+1, len(restaurants)+2))
     # MÉTRIQUES
 
     for i in range(timeSpan):
@@ -133,12 +136,17 @@ def run(crousEff=None, crousPrice=None, max_int_CPM=None, timeSpan=None, random_
                 clients[-1].id = 0
             else:
                 clients[-1].id = clients[-2].id + 1
+            M_clientsAttrs[clients[-1].id, 0] = clients[-1].patience
+            M_clientsAttrs[clients[-1].id, 1] = clients[-1].budget
+            for k in range(len(restaurants)):
+                M_clientsAttrs[clients[-1].id, k+2] = clients[-1].pref_lists[k]
 
         if not clients or M_served[i] == max_int_CPM[1]-3:
             continue
 
         for j in range(clients[-1].id):
             if not clients[j].waiting:
+                M_steps[i, j] = [4, 0]
                 continue
             bestRest = clients[j].bestRestaurant(restaurants)
             currentRest = clients[j].restaurant
@@ -148,6 +156,7 @@ def run(crousEff=None, crousPrice=None, max_int_CPM=None, timeSpan=None, random_
                     currentRest.remove_client(j)
                 clients[j].restaurant = bestRest
                 bestRest.add_client(j)
+            M_steps[i, j] = [clients[j].restaurant.id + 1, clients[j].restaurant.rank(clients[j].id)]
 
         for restaurant in restaurants:
             for j in range(restaurant.eff):
@@ -187,7 +196,14 @@ def run(crousEff=None, crousPrice=None, max_int_CPM=None, timeSpan=None, random_
         fig.tight_layout()
         plt.show()
 
+    if saveProcess:
+        print(M_clientsAttrs)
+        with h5py.File(f'simLogData/log0.h5', 'w') as file:
+            steps = file.create_dataset('steps', data=M_steps, compression="gzip", compression_opts=9)
+            clientAttrs = file.create_dataset('clientAttrs', data=M_clientsAttrs, compression="gzip", compression_opts=9)
+            #file.attrs["test"] = test
+
     return global_satisf
 
 if __name__ == "__main__":
-    run(showResults=True)
+    run(showResults=True, saveProcess=True)
