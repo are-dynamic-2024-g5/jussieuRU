@@ -1,6 +1,7 @@
 import numpy as np
 from termcolor import colored
 import matplotlib.pyplot as plt
+from os import listdir
 import h5py
 
 class Client:
@@ -75,7 +76,7 @@ class Restaurant:
 def compute_dists(pos_list, pos):
     return np.round( np.sqrt( np.sum( (pos_list-pos)**2, axis=1)), 3)
 
-def run(crousEff=None, crousPrice=None, max_int_CPM=None, timeSpan=None, random_patience=None, random_budget=None, random_prefs=None, showResults=False, saveProcess=False):
+def run(crousEff=None, crousPrice=None, max_int_CPM=None, timeSpan=None, random_patience=None, random_budget=None, random_prefs=None, showResults=False, saveProcess=False, logId=None):
     # PARAMÈTRES
     if not max_int_CPM:
         max_int_CPM = (300, 2000)
@@ -197,8 +198,14 @@ def run(crousEff=None, crousPrice=None, max_int_CPM=None, timeSpan=None, random_
         plt.show()
 
     if saveProcess:
-        print(M_clientsAttrs)
-        with h5py.File(f'simLogData/log0.h5', 'w') as file:
+        log_path = "simLogData"
+        if listdir(log_path):
+            file_id = max([int(name.split("_")[1].split(".")[0]) for name in listdir(log_path) if name[:3] == "log"]) +1
+        else:
+            file_id = 0
+        if logId:
+            file_id = logId
+        with h5py.File(f'{log_path}/log_{file_id}.h5', 'w') as file:
             steps = file.create_dataset('steps', data=M_steps, compression="gzip", compression_opts=9)
             clientAttrs = file.create_dataset('clientAttrs', data=M_clientsAttrs, compression="gzip", compression_opts=9)
             #file.attrs["test"] = test
@@ -206,4 +213,4 @@ def run(crousEff=None, crousPrice=None, max_int_CPM=None, timeSpan=None, random_
     return global_satisf
 
 if __name__ == "__main__":
-    run(showResults=True, saveProcess=True)
+    run(showResults=True, saveProcess=True, logId=0)

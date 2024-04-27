@@ -1,5 +1,14 @@
-import pygame
+import pygame, h5py
 from pygame import gfxdraw
+import numpy as np
+from tqdm import tqdm
+
+import sys
+np.set_printoptions(threshold=sys.maxsize)
+
+file = h5py.File('simLogData/log_0.h5', 'r')
+M_steps = file['steps']
+M_clientAttrs = file['clientAttrs']
 
 screenSize = 600
 pygame.init()
@@ -30,7 +39,21 @@ def queue_pos(t, width):
         y = 2
     return x, y+t//n*4
 
-
+M_swap   = np.zeros((M_steps.shape[0], M_steps.shape[1]))
+M_new    = np.zeros((M_steps.shape[0], M_steps.shape[1]))
+M_eating = np.zeros((M_steps.shape[0], M_steps.shape[1]))
+M_inline = np.zeros((M_steps.shape[0], M_steps.shape[1]), dtype=np.uint16)
+for i in tqdm(range(M_steps.shape[0]-1)):
+    for j in range(M_steps.shape[1]):
+        if M_steps[i, j, 0] != M_steps[i+1, j, 0]:
+            if M_steps[i+1, j, 0] == 4:
+                M_eating[i+1, j] = 1
+            elif M_steps[i, j, 0] == 0:
+                M_new[i+1, j] = 1
+            else:
+                M_swap[i+1, j] = M_steps[i+1, j, 0]
+        elif M_steps[i, j, 1] != M_steps[i+1, j, 1]:
+            M_inline[i+1, j] = M_steps[i+1, j, 1]
 
 i = 0
 while running:
@@ -40,7 +63,7 @@ while running:
 
     real_screen.blit(pygame.transform.scale(screen, real_screen.get_rect().size), (0, 0))
     pygame.display.flip()
-    clock.tick(20)
+    clock.tick(50)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
