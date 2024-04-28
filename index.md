@@ -3,7 +3,7 @@
 Ce projet consiste à mener une analyse approfondie en utilisant un modèle Python pour étudier les schémas de fréquentation des restaurants autour de la région de Jussieu. En tirant parti des capacités d'analyse des données de Python, le projet vise à découvrir des aperçus sur les facteurs influençant la popularité des restaurants, tels que le prix,les types de cuisine, la proximité avec d'autres établissements ainsi que le budget de chacun. Grâce à la collecte, au nettoyage et à l'analyse des données, le modèle aidera à identifier les tendances et les schémas dans le comportement des clients, fournissant ainsi des aperçus précieux aux propriétaires de restaurants, aux entreprises locales et aux urbanistes intéressés par l'optimisation de l'expérience culinaire et de l'activité économique dans les environs de Jussieu.
 
 <p align="center">
-  <img width="700"  src="">
+  <img width="700"  src="./images/modele.png">
 </p>
 
 ## Présentation de l'équipe
