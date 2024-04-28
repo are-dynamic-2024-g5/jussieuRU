@@ -28,7 +28,15 @@ Je sais pas
 
 ## Présentation structurée des résultats
 
-Présentation du choix de modélisation, des outils, du code et des résultats (tableaux, courbes, animations...) (**avec une analyse critique**).
+Dans le cadre de ce projet d'analyse des schémas de fréquentation des restaurants autour de la région de Jussieu, nous avons développé un modèle en utilisant Python pour examiner les tendances et les facteurs influençant la popularité des restaurants. Voici un aperçu des principaux points à considérer :
+Choix de modélisation : Nous avons opté pour une modélisation orientée objet en utilisant des classes Python pour représenter les clients et les restaurants. Cela nous a permis de créer une architecture flexible et extensible pour notre simulation. Les méthodes définies dans les classes permettent de calculer l'attrait des restaurants en fonction de divers critères tels que le prix, la file d'attente, la distance et les préférences des clients. Les paramètres de simulation sont ajustables, ce qui nous permet de contrôler différents aspects du modèle pour des analyses approfondies.
+Outils et code : Nous avons utilisé des bibliothèques Python telles que NumPy, Matplotlib pour le traitement des données, la visualisation et la gestion des fichiers. Le code est bien structuré, facilitant ainsi sa compréhension et sa maintenance. Il est divisé en deux parties : la première définit les classes et les fonctions pour la simulation, tandis que la deuxième exécute la simulation, collecte les données et trace les résultats.
+
+
+## Conclusion et Analyse Critique
+
+En conclusion, notre projet d'analyse des schémas de fréquentation des restaurants autour de la région de Jussieu nous a permis de développer un modèle robuste basé sur Python. Ce modèle offre des perspectives précieuses sur les tendances de fréquentation et fournit des recommandations utiles pour les propriétaires de restaurants et les décideurs locaux. Cependant, malgré sa capacité à capturer les interactions client-restaurant, des améliorations sont nécessaires pour tenir compte de certains facteurs externes, tels que la qualité de la nourriture et les retours des clients, afin d'optimiser davantage l'expérience culinaire dans la région de Jussieu. Une analyse plus approfondie des résultats et une validation supplémentaire du modèle pourraient également être bénéfiques pour garantir sa pertinence et sa précision dans des contextes réels.
+
 
 ## Bibliographie :
 
