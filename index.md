@@ -38,6 +38,15 @@ Dans le cadre de ce projet d'analyse des schémas de fréquentation des restaura
 
 **Outils et code :** Nous avons utilisé des bibliothèques Python telles que NumPy, Matplotlib pour le traitement des données, la visualisation et la gestion des fichiers. Le code est bien structuré, facilitant ainsi sa compréhension et sa maintenance. Il est divisé en deux parties : la première définit les classes et les fonctions pour la simulation, tandis que la deuxième exécute la simulation, collecte les données et trace les résultats.
 
+**Quelques graphes :**
+
+<p align="center">
+  <img width="700"  src=".graphs/fig1.png">
+</p>
+
+<p align="center">
+  <img width="700"  src=".graphs/fig2.png">
+</p>
 
 ## Conclusion et Analyse Critique
 
