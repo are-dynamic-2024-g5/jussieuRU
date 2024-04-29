@@ -38,8 +38,7 @@ Dans le cadre de ce projet d'analyse des schémas de fréquentation des restaura
 <p align="center">
   <img width="700"  src="./graphs/fig1.png">
 </p>
-Graphes montrant les files d'attente des différents restaurants en fonction du temps (les courbes du premier graphe étant superposées)
-Rouge : CROUS    Orange : FIVE PIZZA    Jaune : CREPES     
+Graphes montrant les files d'attente des différents restaurants en fonction du temps (les courbes du premier graphe étant superposées)   
 
 <p align="center">
   <img width="700"  src="./graphs/fig2.png">
