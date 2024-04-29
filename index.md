@@ -36,11 +36,11 @@ Dans le cadre de ce projet d'analyse des schémas de fréquentation des restaura
 **Quelques graphes :**
 
 <p align="center">
-  <img width="700"  src=".graphs/fig1.png">
+  <img width="700"  src="./graphs/fig1.png">
 </p>
 
 <p align="center">
-  <img width="700"  src=".graphs/fig2.png">
+  <img width="700"  src="./graphs/fig2.png">
 </p>
 
 ## Conclusion et Analyse Critique
