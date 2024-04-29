@@ -179,6 +179,7 @@ for i in tqdm(range(1, M_steps.shape[0]-1)):
             else:
                 k += 1
             real_screen.blit(pygame.transform.scale(screen, real_screen.get_rect().size), (0, 0))
+            clock.tick(40)
             pygame.display.flip()
     # SWAPS
 
@@ -217,7 +218,7 @@ for i in tqdm(range(1, M_steps.shape[0]-1)):
             else:
                 k+=1
         real_screen.blit(pygame.transform.scale(screen, real_screen.get_rect().size), (0, 0))
-        clock.tick(150)
+        clock.tick(40)
         pygame.display.flip()
     # NEW
 
@@ -227,6 +228,13 @@ for i in tqdm(range(1, M_steps.shape[0]-1)):
             if M_eating[i, j]:
                 queues[M_steps[i-1, j][0]-1, M_steps[i-1, j][1]] = 0
                 gfxdraw.pixel(screen, *clients[j].pos , [255, 0, 0])
+                real_screen.blit(pygame.transform.scale(screen, real_screen.get_rect().size), (0, 0))
+                pygame.display.flip()
+                clock.tick(70)
+        pygame.time.wait(100)
+        for j in range(len(M_eating[i])):
+            if M_eating[i, j]:
+                gfxdraw.pixel(screen, *clients[j].pos , [0]*3)
                 real_screen.blit(pygame.transform.scale(screen, real_screen.get_rect().size), (0, 0))
                 pygame.display.flip()
                 clock.tick(70)
@@ -246,5 +254,15 @@ for i in tqdm(range(1, M_steps.shape[0]-1)):
     print(np.trim_zeros(queues[0], trim='b'), len(queues[0]))
     print(np.trim_zeros(queues[1], trim='b'), len(queues[1]))
     print(np.trim_zeros(queues[2], trim='b'), len(queues[2]))
+
+    if not np.any(queues):
+        screen.fill('black')
+        screen.blit(restoC, (1, 1))
+        screen.blit(restoF, (1 + resto_size[0] + 6, 1))
+        screen.blit(restoP, (1 + resto_size[0] * 2 + 6 * 2, 1))
+        real_screen.blit(pygame.transform.scale(screen, real_screen.get_rect().size), (0, 0))
+        pygame.display.flip()
+        pygame.time.wait(500)
+        break
 
 pygame.quit()
