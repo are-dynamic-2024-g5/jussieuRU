@@ -40,6 +40,9 @@ Dans le cadre de ce projet d'analyse des schémas de fréquentation des restaura
 </p>
 Graphes montrant les files d'attente des différents restaurants en fonction du temps (les courbes du premier graphe étant superposées)   
 
+<p align="center">
+  <img width="700"  src="./graphs/fig4.png">
+</p>
 Graphes montrant l'évolution d'une simulation en fonction du temps (les courbes du premier graphe étant superposées)
 
 ## Conclusion et Analyse Critique
