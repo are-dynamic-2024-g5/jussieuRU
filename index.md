@@ -22,13 +22,8 @@ Comment ameliorer le crous de Jussieu?
 **Hypothèse principale :**
 Y a-t-il une corrélation entre le prix des repas proposés par un restaurant et son attrait pour les clients ?
 
-**Hypothèses secondaires :** 
-Je sais pas 
-
 **Objectifs :**
 Évaluer la satisfaction globale des clients à l'égard des différents restaurants de Jussieu.
-
-**Critère(s) d'évaluation :**
 
 ## Présentation structurée des résultats
 
