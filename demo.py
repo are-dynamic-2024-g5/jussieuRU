@@ -14,10 +14,10 @@ class Client():
         self.current_resto_id = None
 
         attrs[0] = max(min(attrs[0], 1), 0)
-        attrs[1] = max(min(attrs[1]/3, 1), 0)
-        self.color = (.5, .5, attrs[0])
+        attrs[1] = max(min(attrs[1]/10, 1), 0)
+        self.color = (attrs[1]/3+.6, attrs[0], 1)
         self.color = tuple(round(i * 255) for i in colorsys.hsv_to_rgb(*self.color))
-        self.color = (255, 255, 255)
+        #self.color = (255, 255, 255)
 
     def step(self):
         if self.traj:
@@ -118,15 +118,20 @@ resto_pos = [1, 1+resto_size[0]+6, 1+resto_size[0]*2+6*2]
 queue_start = [queue_pos(*qdlw, 0), queue_pos(*qdlw, 1), queue_pos(*qdlw, 2)]
 mid_line = queue_start[0][1]+1
 start_pos = (int(screen_size[0]/2), mid_line+10)
+debugMode = False
+videoMode = False
 
 pygame.init()
 screen_height = 400
-real_screen = pygame.display.set_mode((int(screen_height/screen_size[1]*screen_size[0]), screen_height))
+if videoMode:
+    real_screen = pygame.display.set_mode((1060, 800))
+else:
+    real_screen = pygame.display.set_mode((int(screen_height/screen_size[1]*screen_size[0]), screen_height))
 clock = pygame.time.Clock()
 running = True
-restoC = pygame.image.load('restoC.bmp')
-restoF = pygame.image.load('restoF.bmp')
-restoP = pygame.image.load('restoP.bmp')
+restoC = pygame.image.load('demo/restoC.bmp')
+restoF = pygame.image.load('demo/restoF.bmp')
+restoP = pygame.image.load('demo/restoP.bmp')
 screen = pygame.surface.Surface(screen_size)
 
 clients = []
@@ -148,6 +153,17 @@ for i in tqdm(range(M_steps.shape[0]-1)):
         elif M_steps[i, j, 1] != M_steps[i+1, j, 1]:
             M_inline[i+1, j] = M_steps[i+1, j, 1]
 
+frameID= 0
+def update_screen(tick=150):
+    global frameID
+    real_screen.blit(pygame.transform.scale(screen, real_screen.get_rect().size), (0, 0))
+    pygame.display.flip()
+    if not videoMode:
+        clock.tick(tick)
+    else:
+        pygame.image.save(real_screen, f"vid/{frameID}.jpeg")
+    frameID += 1
+
 screen.fill('black')
 screen.blit(restoC, (1, 1))
 screen.blit(restoF, (1 + resto_size[0] + 6, 1))
@@ -155,7 +171,8 @@ screen.blit(restoP, (1 + resto_size[0] * 2 + 6 * 2, 1))
 queues = current_queues(M_steps[0])
 
 for i in tqdm(range(1, M_steps.shape[0]-1)):
-    print(f"################## STEP {i} ##################")
+    if debugMode:
+        print(f"################## STEP {i} ##################")
     moving_clients = []
 
     # SWAPS
@@ -178,9 +195,7 @@ for i in tqdm(range(1, M_steps.shape[0]-1)):
                 moving_clients.pop(k)
             else:
                 k += 1
-            real_screen.blit(pygame.transform.scale(screen, real_screen.get_rect().size), (0, 0))
-            clock.tick(40)
-            pygame.display.flip()
+            update_screen()
     # SWAPS
 
     # CRAM
@@ -191,6 +206,7 @@ for i in tqdm(range(1, M_steps.shape[0]-1)):
             for k in range(len(new_queue)):
                 clients[int(new_queue[k])].traj = [queue_pos(k, qdlw[1], clients[int(new_queue[k])].current_resto_id)]
                 clients[int(new_queue[k])].step()
+                update_screen()
             new_queue = list(new_queue)
             while len(new_queue) < len(queues[q]):
                 new_queue.append(0)
@@ -217,9 +233,7 @@ for i in tqdm(range(1, M_steps.shape[0]-1)):
                 moving_clients.pop(k)
             else:
                 k+=1
-        real_screen.blit(pygame.transform.scale(screen, real_screen.get_rect().size), (0, 0))
-        clock.tick(40)
-        pygame.display.flip()
+        update_screen()
     # NEW
 
     # FLUSH
@@ -228,16 +242,12 @@ for i in tqdm(range(1, M_steps.shape[0]-1)):
             if M_eating[i, j]:
                 queues[M_steps[i-1, j][0]-1, M_steps[i-1, j][1]] = 0
                 gfxdraw.pixel(screen, *clients[j].pos , [255, 0, 0])
-                real_screen.blit(pygame.transform.scale(screen, real_screen.get_rect().size), (0, 0))
-                pygame.display.flip()
-                clock.tick(70)
+                update_screen(70)
         pygame.time.wait(100)
         for j in range(len(M_eating[i])):
             if M_eating[i, j]:
                 gfxdraw.pixel(screen, *clients[j].pos , [0]*3)
-                real_screen.blit(pygame.transform.scale(screen, real_screen.get_rect().size), (0, 0))
-                pygame.display.flip()
-                clock.tick(70)
+                update_screen(70)
         for q in range(len(queues)):
             new_queue = queues[q]
             new_queue = new_queue[new_queue != 0]
@@ -249,19 +259,19 @@ for i in tqdm(range(1, M_steps.shape[0]-1)):
                 new_queue.append(0)
             queues[q] = new_queue.copy()
     # FLUSH
-    real_screen.blit(pygame.transform.scale(screen, real_screen.get_rect().size), (0, 0))
-    pygame.display.flip()
-    print(np.trim_zeros(queues[0], trim='b'), len(queues[0]))
-    print(np.trim_zeros(queues[1], trim='b'), len(queues[1]))
-    print(np.trim_zeros(queues[2], trim='b'), len(queues[2]))
+
+    update_screen()
+    if debugMode:
+        print(np.trim_zeros(queues[0], trim='b'), len(queues[0]))
+        print(np.trim_zeros(queues[1], trim='b'), len(queues[1]))
+        print(np.trim_zeros(queues[2], trim='b'), len(queues[2]))
 
     if not np.any(queues):
         screen.fill('black')
         screen.blit(restoC, (1, 1))
         screen.blit(restoF, (1 + resto_size[0] + 6, 1))
         screen.blit(restoP, (1 + resto_size[0] * 2 + 6 * 2, 1))
-        real_screen.blit(pygame.transform.scale(screen, real_screen.get_rect().size), (0, 0))
-        pygame.display.flip()
+        update_screen()
         pygame.time.wait(500)
         break
 
