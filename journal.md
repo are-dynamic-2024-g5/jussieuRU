@@ -34,7 +34,7 @@
   <summary>Journée 4</summary>
 
 - Ajout de la métrique : satisfaction globale (satisf. finale de chaque client)
--Visualisation des swaps (et leur destination) sur les graphes
+- Visualisation des swaps (et leur destination) sur les graphes
 
 
 </details>
