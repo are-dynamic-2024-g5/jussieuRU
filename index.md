@@ -53,7 +53,3 @@ Graphes montrant l'évolution d'une simulation en fonction du temps (les courbes
 
 En conclusion, notre projet d'analyse des schémas de fréquentation des restaurants autour de la région de Jussieu nous a permis de développer un modèle basé sur Python. Ce modèle offre des perspectives précieuses sur les tendances de fréquentation et fournit des recommandations utiles pour les propriétaires de restaurants et les décideurs locaux. Dautre part notre code se focalise sur le comportement individuel des clients plutôt que sur les mouvements de groupe, simplifiant ainsi la simulation. Cependant, cette approche peut négliger la réalité des files d'attente dans les restaurants de Jussieu, où les clients se déplacent souvent en groupe. Cette limite doit être prise en compte lors de l'analyse des résultats de la simulation.
 Pour accroître la pertinence et la précision de notre simulation, nous envisageons l'intégration de facteurs externes tels que des tendances de fréquentation spécifiques à chaque jour de la semaine, les périodes de vacances ou les événements spéciaux. De même, en anticipant les périodes de vacances scolaires, les restaurants pourraient adapter le niveau de personnel et les capacités d'accueil pour répondre à une demande plus basse. Une analyse plus approfondie des résultats et une validation supplémentaire du modèle pourraient également être bénéfiques pour garantir sa pertinence et sa précision dans des contextes réels.
-
-
-## Bibliographie :
-
