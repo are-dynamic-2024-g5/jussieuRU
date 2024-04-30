@@ -45,6 +45,10 @@ Graphes montrant les files d'attente des différents restaurants en fonction du 
 </p>
 Graphes montrant l'évolution d'une simulation en fonction du temps (les courbes du premier graphe étant superposées)
 
+## Simulation
+
+<video src="./demo/demo2.mp4" width="700" height="400" controls="" preload=""></video>
+
 ## Conclusion et Analyse Critique
 
 En conclusion, notre projet d'analyse des schémas de fréquentation des restaurants autour de la région de Jussieu nous a permis de développer un modèle basé sur Python. Ce modèle offre des perspectives précieuses sur les tendances de fréquentation et fournit des recommandations utiles pour les propriétaires de restaurants et les décideurs locaux. Dautre part notre code se focalise sur le comportement individuel des clients plutôt que sur les mouvements de groupe, simplifiant ainsi la simulation. Cependant, cette approche peut négliger la réalité des files d'attente dans les restaurants de Jussieu, où les clients se déplacent souvent en groupe. Cette limite doit être prise en compte lors de l'analyse des résultats de la simulation.
