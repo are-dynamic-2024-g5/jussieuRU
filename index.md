@@ -47,7 +47,7 @@ Graphes montrant l'évolution d'une simulation en fonction du temps (les courbes
 
 ## Simulation
 
-<video src="./demo/demo2.mp4" width="700" height="400" controls="" preload=""></video>
+<video src="./demo/demo2.mp4" width="700" height="264" controls="" preload=""></video>
 
 ## Conclusion et Analyse Critique
 
